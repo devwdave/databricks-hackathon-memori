@@ -1,0 +1,28 @@
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend/.env
+    environment:
+      CORS_ORIGINS: http://localhost:3000,http://127.0.0.1:3000
+    networks:
+      - app
+
+  frontend:
+    profiles: ["frontend"]
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      # Browser calls the API via the host-mapped backend port.
+      VITE_API_URL: http://localhost:8000
+    depends_on:
+      - backend
+    networks:
+      - app
+
+networks:
+  app:
+    driver: bridge
